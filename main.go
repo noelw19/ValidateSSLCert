@@ -6,13 +6,24 @@ import (
 	"crypto/x509"
 	"fmt"
 	"time"
+	"flag"
 )
 
 func main() {
-	conn,err := tls.Dial("tcp", "google.com:443", nil)
+	var url string
+	var port string
+
+	flag.StringVar(&url, "u","google.com", "Specify url")
+	flag.StringVar(&port, "p", "443", "specify port. Default 443")
+
+	flag.Parse()
+
+	fmt.Println(url, port)
+
+	conn,err := tls.Dial("tcp", url+":"+port, nil)
 	must(err, "erver doesn't support SSL certificate err: ")
 	// check SSL and site hostname match
-	er := conn.VerifyHostname("google.com")
+	er := conn.VerifyHostname(url)
 	must(er, "Hostname doesn't match with certificate: ")
 	// fmt.Println(conn)
 
